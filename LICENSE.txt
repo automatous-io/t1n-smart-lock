@@ -1,0 +1,23 @@
+T1N Smart Lock
+Copyright 2025-2026 AUTOMATOUS.IO
+
+This repository is multi-licensed. Different parts of the project
+are governed by different licenses, each carried in the directory
+it applies to:
+
+  firmware/   Apache License, Version 2.0
+              See firmware/LICENSE.txt
+
+  hardware/   Creative Commons Attribution 4.0 International
+              (CC BY 4.0)
+              See hardware/LICENSE.txt
+
+  enclosure/  Creative Commons Attribution 4.0 International
+              (CC BY 4.0)
+              See enclosure/LICENSE.txt
+
+No single license covers the entire repository. When you use a
+part of this project, the license in that part's directory governs.
+
+For a plain language explanation of what each license permits,
+see docs/LICENSING.md.

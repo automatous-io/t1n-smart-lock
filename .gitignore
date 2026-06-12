@@ -1,0 +1,21 @@
+# Build output (matches at any depth)
+build/
+sdkconfig
+sdkconfig.old
+.cache/
+
+# Managed components — downloaded automatically, not committed
+managed_components/
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# VS Code: machine-specific settings
+.vscode/
+*.code-workspace
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
