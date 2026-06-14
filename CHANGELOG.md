@@ -16,7 +16,25 @@ here are part of what defines a release.
 
 | Firmware | PCB | Enclosure | ESP-IDF | esp_matter | Validated on |
 |---|---|---|---|---|---|
+| 1.0.1 | v1.0 | v1.0 | 5.4.4 | 1.5.0 | 2005 Dodge Sprinter 2500 |
 | 1.0.0 | v1.0 | v1.0 | 5.4.4 | 1.4.2~2 | 2005 Dodge Sprinter 2500 |
+
+## 1.0.1 - 2026-06-14
+
+Maintenance release. Firmware 1.0.1 on PCB v1.0 and enclosure v1.0.
+
+Bumps the pinned `espressif/esp_matter` managed component from
+`1.4.2~2` to `1.5.0` and adapts the contact sensor push to the 1.5
+data model. In 1.5, BooleanState became a code driven cluster: its
+`StateValue` is owned by the connectedhomeip `BooleanStateCluster`
+object rather than the esp_matter attribute store, so the previous
+`esp_matter::attribute::update` path returns `ESP_ERR_NOT_SUPPORTED`
+and the driver/PAX door contacts silently stopped updating in Apple
+Home and Home Assistant. The firmware now sets `StateValue` through the
+cluster object retrieved from the data-model provider registry
+(`SetStateValue`), restoring contact reporting. The lock endpoint is
+unchanged; it already used the cluster setter
+(`DoorLockServer::SetLockState`).
 
 ## 1.0.0 - 2026-06-12
 

@@ -807,12 +807,16 @@ computed state differs from the last pushed state, it pushes the
 new state to Matter and updates the tracker.
 
 The push uses `DoorLockServer::SetLockState` for the lock
-endpoint and `esp_matter::attribute::update` on the BooleanState
-`StateValue` attribute for the contact-sensor door endpoints. In
-esp-matter 1.4.2~2 that attribute is created as a normal attribute
-(`ATTRIBUTE_FLAG_NONE`), so the standard attribute-update path
-writes it directly; the cluster setter `SetStateValue` is a v1.5+
-addition not present in this release. Note that Matter's
+endpoint and the BooleanState cluster setter for the contact sensor
+door endpoints. In esp-matter 1.5 the BooleanState cluster is
+code driven: its `StateValue` is owned by the connectedhomeip
+`BooleanStateCluster` object rather than the esp_matter attribute
+store, so `esp_matter::attribute::update` returns
+`ESP_ERR_NOT_SUPPORTED`. The push instead looks the cluster up in the
+data-model provider registry
+(`esp_matter::data_model::provider::get_instance().registry().Get`)
+and calls `SetStateValue`, which writes the value, emits the
+StateChange event, and marks the attribute dirty. Note that Matter's
 BooleanState convention is inverted from intuition: `true` means
 contact made (door closed),
 so the push inverts the open state before writing it. Matter's

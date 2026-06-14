@@ -33,6 +33,8 @@
 
 #include <esp_matter.h>
 #include <app/clusters/door-lock-server/door-lock-server.h>
+#include <app/clusters/boolean-state-server/boolean-state-cluster.h>
+#include <data_model_provider/esp_matter_data_model_provider.h>
 
 #include <atomic>
 #include <optional>
@@ -505,28 +507,39 @@ struct contact_push_ctx {
 
 static void push_contact_sensor_chip_task(intptr_t arg)
 {
+    using namespace chip::app;
     using namespace chip::app::Clusters;
 
     contact_push_ctx *ctx = (contact_push_ctx *)arg;
 
-    // 1.4.2~2: BooleanState::StateValue is created with
-    // ATTRIBUTE_FLAG_NONE (a normal attribute), so the standard
-    // esp_matter attribute API updates it. The cluster-setter API
-    // (BooleanStateCluster::SetStateValue) is a v1.5+ addition not
-    // present in this registry release.
-    esp_matter_attr_val_t val = esp_matter_bool(ctx->value);
-    esp_err_t err = esp_matter::attribute::update(
-        ctx->endpoint_id,
-        BooleanState::Id,
-        BooleanState::Attributes::StateValue::Id,
-        &val);
+    // esp-matter 1.5: BooleanState is a code driven cluster. Its
+    // StateValue is owned by the connectedhomeip BooleanStateCluster
+    // object, not the esp_matter attribute store, so the generic
+    // esp_matter::attribute::update() path returns ESP_ERR_NOT_SUPPORTED
+    // (observed err 262 on van). esp_matter registers each cluster
+    // instance in the data-model provider's registry; look it up there
+    // and set the value through the object. SetStateValue() writes the
+    // value, emits the StateChange event, and marks the attribute dirty
+    // for subscriptions.
+    //
+    // (esp_matter ships its own boolean_state integration instead of
+    // connectedhomeip's CodegenIntegration, so the upstream
+    // BooleanState::FindClusterOnEndpoint() accessor is not linked in
+    // this build; the registry lookup is the supported path.)
+    //
+    // Runs on the CHIP task (via PlatformMgr().ScheduleWork in the
+    // caller), which is required for data-model access.
+    ServerClusterInterface *iface =
+        esp_matter::data_model::provider::get_instance().registry().Get(
+            ConcreteClusterPath(ctx->endpoint_id, BooleanState::Id));
 
-    if (err == ESP_OK) {
+    if (iface != nullptr) {
+        static_cast<BooleanStateCluster *>(iface)->SetStateValue(ctx->value);
         ESP_LOGI(TAG, "BooleanState pushed: endpoint=%u value=%d.",
                  ctx->endpoint_id, ctx->value ? 1 : 0);
     } else {
-        ESP_LOGW(TAG, "BooleanState update failed: endpoint=%u value=%d err=%s.",
-                 ctx->endpoint_id, ctx->value ? 1 : 0, esp_err_to_name(err));
+        ESP_LOGW(TAG, "BooleanState cluster not found: endpoint=%u value=%d.",
+                 ctx->endpoint_id, ctx->value ? 1 : 0);
     }
     delete ctx;
 }

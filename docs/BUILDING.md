@@ -21,14 +21,14 @@ For what the firmware actually does once built, see
 ## Requirements
 
 - **ESP-IDF v5.4.4**. Espressif's IoT development framework, and
-  the only SDK you install yourself. The esp_matter `1.4.2~2`
+  the only SDK you install yourself. The esp_matter `1.5`
   release targets ESP-IDF 5.4.1; this project pins 5.4.4, the
   final 5.4.x patch release, which stays on the version line
   esp_matter expects and includes the 5.4.x bug fixes released
   after 5.4.1.
 - **esp_matter, from the component registry**. Espressif's Matter
   SDK is pulled in automatically as a managed component, pinned to
-  `1.4.2~2` in `main/idf_component.yml`. You do not clone or
+  `1.5` in `main/idf_component.yml`. You do not clone or
   install esp-matter separately; the first build fetches it into
   `managed_components/`.
 - **macOS or Linux**. The Windows build host is not tested.
@@ -170,7 +170,7 @@ manual SDK checkout. Three things pin it:
 
 - **ESP-IDF v5.4.4**, the version this release was built with.
 - **`main/idf_component.yml`**, which pins `espressif/esp_matter`
-  to `1.4.2~2` and `espressif/button` to `^4`.
+  to `1.5` and `espressif/button` to `^4`.
 - **`firmware/dependencies.lock`**, which records the exact
   resolved version and content hash of every managed component,
   including esp_matter and its transitive dependencies.

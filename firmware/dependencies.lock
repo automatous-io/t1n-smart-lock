@@ -111,7 +111,7 @@ dependencies:
       type: service
     version: 1.3.3
   espressif/esp_matter:
-    component_hash: 6c2372c2458ed4fb7ad3ea5766569d652ab8c6679cddaf7d176353119c881f80
+    component_hash: 3ae9a71ba912e5bef1e3b6ac2e6f7edc496ec63527b0ebf52a2cab1a0419702e
     dependencies:
     - name: espressif/esp_delta_ota
       registry_url: https://components.espressif.com
@@ -125,6 +125,12 @@ dependencies:
       rules:
       - if: idf_version >=4.4
       version: 2.3.0
+    - name: espressif/esp_hosted
+      registry_url: https://components.espressif.com
+      require: private
+      rules:
+      - if: target in [esp32p4]
+      version: ~2
     - name: espressif/esp_insights
       registry_url: https://components.espressif.com
       require: private
@@ -167,7 +173,7 @@ dependencies:
     source:
       registry_url: https://components.espressif.com/
       type: service
-    version: 1.4.2~2
+    version: 1.5.0
   espressif/esp_rcp_update:
     component_hash: 37f535edd527a45faeaad649c0c56af36e5399074e52d83f0990fce466844dde
     dependencies:
@@ -256,6 +262,6 @@ direct_dependencies:
 - espressif/button
 - espressif/esp_matter
 - idf
-manifest_hash: 7615ee13c335b7645aa8648ba2b4f8f6ecf1a4fc383564af18ac4a2936ecabb9
+manifest_hash: 5af1ac22d1f000cf87de96fde91d78322c3e294659f567ec9c2305ea92f0577e
 target: esp32c6
 version: 2.0.0
